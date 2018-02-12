@@ -113,6 +113,7 @@ public class RecyclerViewHelper {
         if (enableSwipeToDelete || enableDragAndDrop) {
             ItemTouchHelper helper = new ItemTouchHelper(itemTouchHelperCallback);
             helper.attachToRecyclerView(recyclerView);
+            adapter.setItemTouchHelper(helper);
         }
 
         return this;

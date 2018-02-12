@@ -1,7 +1,9 @@
 package com.github.htdangkhoa.library.ItemTouch;
 
 import android.graphics.Canvas;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.github.htdangkhoa.library.Adapter.RecyclerViewHelperAdapter;
 
@@ -13,6 +15,7 @@ public class ItemTouchHelperCallback extends android.support.v7.widget.helper.It
     RecyclerViewHelperAdapter adapter;
     boolean enableDragAndDrop = false;
     boolean enableSwipeToDelete = false;
+    int orientation;
 
     public void setAdapter(RecyclerViewHelperAdapter adapter) {
         this.adapter = adapter;
@@ -28,14 +31,20 @@ public class ItemTouchHelperCallback extends android.support.v7.widget.helper.It
 
     @Override
     public boolean isLongPressDragEnabled() {
-        return enableDragAndDrop;
+        return false;
     }
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        int dragFlags = android.support.v7.widget.helper.ItemTouchHelper.UP | android.support.v7.widget.helper.ItemTouchHelper.DOWN;
-        int swipeFlags = android.support.v7.widget.helper.ItemTouchHelper.START | android.support.v7.widget.helper.ItemTouchHelper.END;
-        return makeMovementFlags((enableDragAndDrop) ? dragFlags : 0, (enableSwipeToDelete) ? swipeFlags : 0);
+        orientation = ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation();
+
+        if (orientation == RecyclerView.HORIZONTAL) {
+            return makeMovementFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                    ItemTouchHelper.UP | ItemTouchHelper.DOWN);
+        } else {
+            return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                    ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        }
     }
 
     @Override
@@ -53,7 +62,12 @@ public class ItemTouchHelperCallback extends android.support.v7.widget.helper.It
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         if (enableSwipeToDelete && actionState == android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE) {
-            float alpha = 1 - (Math.abs(dX) / recyclerView.getWidth());
+            float alpha = 1.0f;
+            if (orientation == RecyclerView.HORIZONTAL) {
+                alpha = 1 - (Math.abs(dY) / recyclerView.getHeight());
+            } else {
+                alpha = 1 - (Math.abs(dX) / recyclerView.getWidth());
+            }
             viewHolder.itemView.setAlpha(alpha);
         }
 

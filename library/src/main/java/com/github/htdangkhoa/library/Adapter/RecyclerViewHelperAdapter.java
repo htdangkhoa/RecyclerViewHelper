@@ -1,6 +1,7 @@
 package com.github.htdangkhoa.library.Adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,15 @@ import java.util.List;
 
 public abstract class RecyclerViewHelperAdapter<V extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<V> implements RecyclerViewHelperAdapterListener {
     List<?> objects;
+    ItemTouchHelper itemTouchHelper;
+
+    public ItemTouchHelper getItemTouchHelper() {
+        return itemTouchHelper;
+    }
+
+    public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
+        this.itemTouchHelper = itemTouchHelper;
+    }
 
     public RecyclerViewHelperAdapter(List<?> objects) {
         this.objects = objects;

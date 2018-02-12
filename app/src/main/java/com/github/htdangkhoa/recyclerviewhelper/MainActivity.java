@@ -4,9 +4,12 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.htdangkhoa.library.RecyclerViewHelper;
@@ -98,6 +101,8 @@ class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> {
     Context context;
     ArrayList<Person> peoples;
 
+    ItemTouchHelper itemTouchHelper;
+
     public Adapter(ArrayList<Person> peoples) {
         super(peoples);
         this.peoples = peoples;
@@ -109,12 +114,22 @@ class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.item, parent, false);
 
+        itemTouchHelper = getItemTouchHelper();
+
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.txtView.setText(peoples.get(position).getName());
+
+        holder.icDrag.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                itemTouchHelper.startDrag(holder);
+            }
+
+            return false;
+        });
     }
 
     @Override
@@ -124,11 +139,13 @@ class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtView;
+        ImageView icDrag;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             txtView = (TextView) itemView.findViewById(R.id.txtView);
+            icDrag = (ImageView) itemView.findViewById(R.id.icDrag);
         }
     }
 }

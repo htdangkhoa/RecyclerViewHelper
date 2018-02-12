@@ -8,6 +8,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.github.htdangkhoa.library.Adapter.RecyclerViewHelperAdapter;
 import com.github.htdangkhoa.library.Decoration.DividerItemDecoration;
+import com.github.htdangkhoa.library.Decoration.StickyItemDecoration;
 import com.github.htdangkhoa.library.ItemTouch.ItemTouchHelperCallback;
 
 /**
@@ -82,6 +83,8 @@ public class RecyclerViewHelper {
     }
 
     public RecyclerViewHelper enableStickyHeader() {
+        StickyItemDecoration stickyItemDecoration = new StickyItemDecoration(context, adapter);
+        recyclerView.addItemDecoration(stickyItemDecoration);
         return this;
     }
 

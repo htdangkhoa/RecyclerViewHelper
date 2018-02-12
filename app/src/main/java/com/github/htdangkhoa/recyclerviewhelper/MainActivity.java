@@ -5,13 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.htdangkhoa.library.Decoration.StickyItemListener;
 import com.github.htdangkhoa.library.RecyclerViewHelper;
 import com.github.htdangkhoa.library.Adapter.RecyclerViewHelperAdapter;
 
@@ -30,31 +33,26 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+        peoples.add(new Person("A", 21));
+
         peoples.add(new Person("B", 21));
-        peoples.add(new Person("C", 21));
-        peoples.add(new Person("D", 21));
-        peoples.add(new Person("E", 21));
-        peoples.add(new Person("F", 21));
-        peoples.add(new Person("G", 21));
-        peoples.add(new Person("H", 21));
-        peoples.add(new Person("I", 21));
-        peoples.add(new Person("J", 21));
-        peoples.add(new Person("K", 21));
-        peoples.add(new Person("L", 21));
-        peoples.add(new Person("M", 21));
-        peoples.add(new Person("N", 21));
-        peoples.add(new Person("O", 21));
-        peoples.add(new Person("P", 21));
-        peoples.add(new Person("Q", 21));
-        peoples.add(new Person("R", 21));
-        peoples.add(new Person("S", 21));
-        peoples.add(new Person("T", 21));
-        peoples.add(new Person("U", 21));
-        peoples.add(new Person("V", 21));
-        peoples.add(new Person("W", 21));
-        peoples.add(new Person("X", 21));
-        peoples.add(new Person("Y", 21));
-        peoples.add(new Person("Z", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
+        peoples.add(new Person("B", 21));
 
         Adapter adapter = new Adapter(peoples);
         adapter.notifyDataSetChanged();
@@ -64,9 +62,10 @@ public class MainActivity extends AppCompatActivity {
                 .setAdapter(adapter)
                 .setRecyclerView(recyclerView)
                 .setOrientation(RecyclerView.VERTICAL)
-                .setDivider()
+//                .setDivider()
                 .enableSwipeToDelete()
                 .enableDragAndDrop()
+                .enableStickyHeader()
                 .build();
     }
 }
@@ -97,7 +96,7 @@ class Person {
     }
 }
 
-class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> {
+class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> implements StickyItemListener<Adapter.ViewHolderHeader> {
     Context context;
     ArrayList<Person> peoples;
 
@@ -137,6 +136,33 @@ class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> {
         return peoples.size();
     }
 
+    @Override
+    public ViewHolderHeader onCreateHeaderViewHolder(ViewGroup parent) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.header, parent, false);
+
+        return new ViewHolderHeader(view);
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(ViewHolderHeader holder, int position) {
+        holder.txtView.setText(peoples.get(position).getName());
+        holder.itemView.setOnClickListener(v -> {
+            Log.i("CLICK", "onBindHeaderViewHolder: " + holder.txtView.getText().toString());
+        });
+    }
+
+    @Override
+    public char getSectionHeader(int position) {
+        return peoples.get(position).getName().charAt(0);
+    }
+
+    @Override
+    public boolean isSection(int position) {
+        return position == 0
+                || peoples.get(position).getName().charAt(0) != peoples.get(position - 1).getName().charAt(0);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtView;
         ImageView icDrag;
@@ -146,6 +172,16 @@ class Adapter extends RecyclerViewHelperAdapter<Adapter.ViewHolder> {
 
             txtView = (TextView) itemView.findViewById(R.id.txtView);
             icDrag = (ImageView) itemView.findViewById(R.id.icDrag);
+        }
+    }
+
+    class ViewHolderHeader extends RecyclerView.ViewHolder {
+        TextView txtView;
+
+        public ViewHolderHeader(View itemView) {
+            super(itemView);
+
+            txtView = (TextView) itemView.findViewById(R.id.txtView);
         }
     }
 }
